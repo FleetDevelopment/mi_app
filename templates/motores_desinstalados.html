@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Motores Desinstalados</title>
+</head>
+<body>
+    <h1>Motores Desinstalados</h1>
+
+    {% if motores %}
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>P/N</th>
+                    <th>S/N</th>
+                    <th>EGTLimit</th>
+                    <th>LLPLimit</th>
+                    <th>Status</th>
+                    <th>TSO</th>
+                    <th>CSO</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for motor in motores %}
+                    <tr>
+                        <td>{{ motor['P/N'] }}</td>
+                        <td>{{ motor['S/N'] }}</td>
+                        <td>{{ motor['EGTLimit'] }}</td>
+                        <td>{{ motor['LLPLimit'] }}</td>
+                        <td>{{ motor['Status'] }}</td>
+                        <td>{{ motor['TSO'] }}</td>
+                        <td>{{ motor['CSO'] }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No hay motores desinstalados disponibles.</p>
+    {% endif %}
+    <a href="{{ url_for('index') }}">Volver</a>
+</body>
+</html>

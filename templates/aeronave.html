@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ matricula }}</title>
+</head>
+<body>
+    <h1>Aeronave: {{ matricula }}</h1>
+    <h2>Motores Instalados</h2>
+    <table border="1">
+        <tr>
+            <th>P/N</th>
+            <th>S/N</th>
+            <th>EGTLimit</th>
+            <th>LLPLimit</th>
+            <th>Status</th>
+            <th>TSO</th>
+            <th>CSO</th>
+        </tr>
+        {% if motores %}
+            {% for motor in motores %}
+                <tr>
+                    <td>{{ motor['P/N'] }}</td>
+                    <td>{{ motor['S/N'] }}</td>
+                    <td>{{ motor['EGTLimit'] }}</td>
+                    <td>{{ motor['LLPLimit'] }}</td>
+                    <td>{{ motor['Status'] }}</td>
+                    <td>{{ motor['TSO'] }}</td>
+                    <td>{{ motor['CSO'] }}</td>
+                </tr>
+            {% endfor %}
+        {% else %}
+            <tr>
+                <td colspan="7">No se encontraron motores instalados para esta aeronave.</td>
+            </tr>
+        {% endif %}
+    </table>
+    <a href="{{ url_for('index') }}">Volver</a>
+</body>
+</html>

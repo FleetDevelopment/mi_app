@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Aeronaves</title>
+</head>
+<body>
+    <h1>Aeronaves</h1>
+    <ul>
+        {% for matricula in aeronaves %}
+            <li><a href="{{ url_for('aeronave', matricula=matricula) }}">{{ matricula }}</a></li>
+        {% endfor %}
+    </ul>
+    <h2><a href="{{ url_for('motores_desinstalados') }}">Motores Desinstalados</a></h2>
+</body>
+</html>
