@@ -9,32 +9,38 @@
     <h1>Motores Desinstalados</h1>
 
     {% if motores %}
-        <table border="1">
-            <thead>
-                <tr>
-                    <th>P/N</th>
-                    <th>S/N</th>
-                    <th>EGTLimit</th>
-                    <th>LLPLimit</th>
-                    <th>Status</th>
-                    <th>TSO</th>
-                    <th>CSO</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for motor in motores %}
-                    <tr>
-                        <td>{{ motor['P/N'] }}</td>
-                        <td>{{ motor['S/N'] }}</td>
-                        <td>{{ motor['EGTLimit'] }}</td>
-                        <td>{{ motor['LLPLimit'] }}</td>
-                        <td>{{ motor['Status'] }}</td>
-                        <td>{{ motor['TSO'] }}</td>
-                        <td>{{ motor['CSO'] }}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>P/N</th>
+                <th>S/N</th>
+                <th>EGT Limit</th>
+                <th>LLP Limit</th>
+                <th>Status</th>
+                <th>TSO</th>
+                <th>CSO</th>
+                <th>TSN</th>
+                <th>CSN</th>
+                <th>Rem Limiter</th> <!-- Nueva columna Rem Limiter -->
+            </tr>
+        </thead>
+        <tbody>
+            {% for motor in motores %}
+            <tr>
+                <td>{{ motor['P/N'] }}</td>
+                <td>{{ motor['S/N'] }}</td>
+                <td>{{ motor['EGTLimit'] if 'EGTLimit' in motor else 'No disponible' }}</td>
+                <td>{{ motor['LLPLimit'] if 'LLPLimit' in motor else 'No disponible' }}</td>
+                <td>{{ motor['Status'] }}</td>
+                <td>{{ motor['TSO'] }}</td>
+                <td>{{ motor['CSO'] }}</td>
+                <td>{{ motor['TSN'] }}</td>
+                <td>{{ motor['CSN'] }}</td>
+                <td>{{ motor['RemLimiter'] }}</td> <!-- Mostrar Rem Limiter -->
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
     {% else %}
         <p>No hay motores desinstalados disponibles.</p>
     {% endif %}

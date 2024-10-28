@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request
 import pandas as pd
+from datetime import datetime, timedelta
 import re
 
 app = Flask(__name__)
@@ -89,21 +90,29 @@ def motores_desinstalados():
 
         if not eng_data.empty:
             eng_data = eng_data.iloc[0]
+            # Calcular Rem Limiter
+            csn = motor['CSN']
+            egt_limit = eng_data['EGTLimit']
+            llp_limit = eng_data['LLPLimit']
+            rem_limiter = min(egt_limit - csn, llp_limit - csn)
+
             motores_info.append({
                 'P/N': motor['P/N'],
                 'S/N': sn,
-                'EGTLimit': eng_data['EGTLimit'],
-                'LLPLimit': eng_data['LLPLimit'],
+                'EGTLimit': egt_limit,
+                'LLPLimit': llp_limit,
                 'Status': motor['Status'],
                 'TSO': motor['TSO'],
-                'CSO': motor['CSO']
+                'CSO': motor['CSO'],
+                'TSN': motor['TSN'],
+                'CSN': csn,
+                'RemLimiter': rem_limiter  # Agregar el resultado de Rem Limiter
             })
         else:
             print(f"No se encontraron datos de englimiter para S/N: {sn}")  # Debugging
 
-    print(f"Número de motores desinstalados encontrados: {len(motores_desinstalados)}")  # Para ver cuántos motores se encontraron
+    print(f"Número de motores desinstalados encontrados: {len(motores_desinstalados)}")
     return render_template('motores_desinstalados.html', motores=motores_info)
-
 
 
 if __name__ == '__main__':
