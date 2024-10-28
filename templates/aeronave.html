@@ -11,11 +11,15 @@
         <tr>
             <th>P/N</th>
             <th>S/N</th>
+            <th>TSN</th>
+            <th>CSN</th>
             <th>EGT Limit</th>
             <th>LLP Limit</th>
             <th>Status</th>
             <th>Time Since Last PR</th>
             <th>Cycles Since Last PR</th>
+            <th>Rem Limiter</th>
+            <th>Fecha Estimada de Vencimiento</th> <!-- Nueva columna Fecha Estimada de Vencimiento -->
         </tr>
         {% if motores %}
             {% for motor in motores %}
@@ -27,6 +31,10 @@
                     <td>{{ motor['Status'] }}</td>
                     <td>{{ motor['TSO'] }}</td>
                     <td>{{ motor['CSO'] }}</td>
+                    <td>{{ motor['TSN'] }}</td>
+                    <td>{{ motor['CSN'] }}</td>
+                    <td>{{ motor['RemLimiter'] }}</td>
+                    <td>{{ motor['FechaVencimiento'] }}</td> <!-- Mostrar Fecha Estimada de Vencimiento -->
                 </tr>
             {% endfor %}
         {% else %}

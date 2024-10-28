@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request
 import pandas as pd
 from datetime import datetime, timedelta
+import locale
 import re
 
 app = Flask(__name__)
@@ -44,14 +45,29 @@ def aeronave(matricula):
 
         if not eng_data.empty:
             eng_data = eng_data.iloc[0]
+            # Calcular Rem Limiter
+            csn = motor['CSN']
+            egt_limit = eng_data['EGTLimit']
+            llp_limit = eng_data['LLPLimit']
+            rem_limiter = min(egt_limit - csn, llp_limit - csn)
+
+            # Calcular Fecha Estimada de Vencimiento en formato 23-Aug-25
+            dias_remanentes = rem_limiter / 7
+            fecha_vencimiento = datetime.today() + timedelta(days=dias_remanentes)
+            fecha_vencimiento_formateada = fecha_vencimiento.strftime('%d-%b-%y')  # Formato DD-MMM-YY
+            
             motores_info.append({
                 'P/N': motor['P/N'],
                 'S/N': sn,
-                'EGTLimit': eng_data['EGTLimit'],
-                'LLPLimit': eng_data['LLPLimit'],
+                'EGTLimit': egt_limit,
+                'LLPLimit': llp_limit,
                 'Status': motor['Status'],
                 'TSO': motor['TSO'],
-                'CSO': motor['CSO']
+                'CSO': motor['CSO'],
+                'TSN': motor['TSN'],
+                'CSN': csn,
+                'RemLimiter': rem_limiter,  # Resultado de Rem Limiter
+                'FechaVencimiento': fecha_vencimiento_formateada  # Fecha de Vencimiento en formato DD-MMM-YY
             })
             print(f"Motor encontrado: {motor['P/N']} con S/N: {sn}")  # Debugging
         else:
@@ -96,6 +112,11 @@ def motores_desinstalados():
             llp_limit = eng_data['LLPLimit']
             rem_limiter = min(egt_limit - csn, llp_limit - csn)
 
+            # Calcular Fecha Estimada de Vencimiento en formato 23-Aug-25
+            dias_remanentes = rem_limiter / 7
+            fecha_vencimiento = datetime.today() + timedelta(days=dias_remanentes)
+            fecha_vencimiento_formateada = fecha_vencimiento.strftime('%d-%b-%y')  # Formato DD-MMM-YY
+
             motores_info.append({
                 'P/N': motor['P/N'],
                 'S/N': sn,
@@ -106,7 +127,8 @@ def motores_desinstalados():
                 'CSO': motor['CSO'],
                 'TSN': motor['TSN'],
                 'CSN': csn,
-                'RemLimiter': rem_limiter  # Agregar el resultado de Rem Limiter
+                'RemLimiter': rem_limiter,  # Resultado de Rem Limiter
+                'FechaVencimiento': fecha_vencimiento_formateada  # Fecha de Vencimiento en formato DD-MMM-YY
             })
         else:
             print(f"No se encontraron datos de englimiter para S/N: {sn}")  # Debugging
