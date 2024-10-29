@@ -19,41 +19,70 @@
     <canvas id="vencimientosChart" width="400" height="200"></canvas>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-    // Asegúrate de que esta sección solo se ejecuta una vez
-    (function() {
-        const vencimientos = {{ vencimientos | tojson }};
-        const labels = vencimientos.map(item => item.Fecha);  // Corregido
-        const data = vencimientos.map(item => item['Rem Limiter']);  // Corregido
 
-        console.log('Vencimientos:', vencimientos);
-        console.log('Labels:', labels);
-        console.log('Data:', data);
+    <script>
+        const vencimientos = {{ vencimientos | tojson }};
+        
+        // Preparar los datos para el gráfico de dispersión
+        const scatterData = vencimientos.map(item => {
+            const fecha = new Date(item.Fecha); // Crear un objeto Date
+            return {
+                x: fecha.getFullYear(), // Año
+                y: fecha.getMonth() + 1, // Mes (de 0-11 a 1-12)
+                sn: item['S/N'] // S/N del motor
+            };
+        });
+
+        console.log('Datos para gráfico de dispersión:', scatterData);
 
         const ctx = document.getElementById('vencimientosChart').getContext('2d');
         const vencimientosChart = new Chart(ctx, {
-            type: 'bar',
+            type: 'scatter',
             data: {
-                labels: labels,
                 datasets: [{
-                    label: 'Proyección de Vencimientos',
-                    data: data,
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    label: 'S/N de Motores por Vencimiento',
+                    data: scatterData,
+                    backgroundColor: 'rgba(75, 192, 192, 0.6)',
                     borderColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: 1
+                    pointRadius: 5 // Tamaño de los puntos
                 }]
             },
             options: {
                 scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Años'
+                        },
+                        type: 'linear',
+                        position: 'bottom'
+                    },
                     y: {
-                        beginAtZero: true
+                        title: {
+                            display: true,
+                            text: 'Meses'
+                        },
+                        ticks: {
+                            callback: function(value) {
+                                // Convertir el número del mes a nombre (1-12 a 'Ene', 'Feb', ...)
+                                const meses = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+                                return meses[value - 1];
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(tooltipItem) {
+                                return `S/N: ${tooltipItem.raw.sn}`; // Mostrar el S/N en el tooltip
+                            }
+                        }
                     }
                 }
             }
         });
-    })(); // Ejecuta la función inmediatamente para evitar redeclaraciones
-</script>
+    </script>
     
     
 </body>
