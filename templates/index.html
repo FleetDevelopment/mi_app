@@ -19,10 +19,17 @@
     <canvas id="vencimientosChart" width="400" height="200"></canvas>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Asegúrate de que esta sección solo se ejecuta una vez
+    (function() {
         const vencimientos = {{ vencimientos | tojson }};
-        const labels = vencimientos.map(item => item.fecha);
-        const data = vencimientos.map(item => item.Rem_Limiter);
+        const labels = vencimientos.map(item => item.Fecha);  // Corregido
+        const data = vencimientos.map(item => item['Rem Limiter']);  // Corregido
+
+        console.log('Vencimientos:', vencimientos);
+        console.log('Labels:', labels);
+        console.log('Data:', data);
 
         const ctx = document.getElementById('vencimientosChart').getContext('2d');
         const vencimientosChart = new Chart(ctx, {
@@ -45,7 +52,8 @@
                 }
             }
         });
-    </script>
+    })(); // Ejecuta la función inmediatamente para evitar redeclaraciones
+</script>
     
     
 </body>
