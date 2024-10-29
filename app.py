@@ -41,12 +41,14 @@ def index():
             # Calcular la fecha de vencimiento estimada
             dias_remanentes = rem_limiter / 7  # Dividir por 7 para días remanentes
             fecha_vencimiento = (datetime.now() + timedelta(days=dias_remanentes)).strftime('%d-%b-%y')
-            
+
             # Agregar al listado de vencimientos
             vencimientos.append({
                 'Fecha': fecha_vencimiento,
-                'Rem Limiter': int(rem_limiter)  # Convertir Rem Limiter a int
+                'Rem Limiter': int(rem_limiter),  # Convertir Rem Limiter a int
+                'S/N': sn  # Asegúrate de agregar S/N aquí
             })
+            print(f"Agregado vencimiento: {vencimientos[-1]}")  # Verifica qué se agrega a la lista
 
     # Renderizar el template principal con las aeronaves y los vencimientos
     return render_template('index.html', aeronaves=aeronaves, vencimientos=vencimientos)

@@ -19,21 +19,23 @@
     <canvas id="vencimientosChart" width="400" height="200"></canvas>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
     <script>
         const vencimientos = {{ vencimientos | tojson }};
-        
+        console.log('Vencimientos:', vencimientos); // Verificar la estructura de los datos
+
         // Preparar los datos para el gráfico de dispersión
         const scatterData = vencimientos.map(item => {
             const fecha = new Date(item.Fecha); // Crear un objeto Date
-            return {
+            console.log('Item:', item); // Verificar cada item
+            console.log('Fecha:', fecha, 'S/N:', item['S/N']); // Verificar fechas y S/N
+             return {
                 x: fecha.getFullYear(), // Año
                 y: fecha.getMonth() + 1, // Mes (de 0-11 a 1-12)
                 sn: item['S/N'] // S/N del motor
             };
         });
 
-        console.log('Datos para gráfico de dispersión:', scatterData);
+        console.log('Datos para gráfico de dispersión:', scatterData); // Verificar los datos que se pasarán al gráfico
 
         const ctx = document.getElementById('vencimientosChart').getContext('2d');
         const vencimientosChart = new Chart(ctx, {
@@ -64,7 +66,6 @@
                         },
                         ticks: {
                             callback: function(value) {
-                                // Convertir el número del mes a nombre (1-12 a 'Ene', 'Feb', ...)
                                 const meses = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
                                 return meses[value - 1];
                             }
@@ -75,7 +76,8 @@
                     tooltip: {
                         callbacks: {
                             label: function(tooltipItem) {
-                                return `S/N: ${tooltipItem.raw.sn}`; // Mostrar el S/N en el tooltip
+                                const sn = tooltipItem.raw.sn; // Acceder correctamente al S/N
+                                return `S/N: ${sn}`; // Mostrar el S/N en el tooltip
                             }
                         }
                     }
@@ -84,10 +86,9 @@
         });
     </script>
     
-    
 </body>
 
-<feet>
+<footer>
     <h2><a href="{{ url_for('motores_desinstalados') }}">Motores Desinstalados</a></h2>
-</feet>
+</footer>
 </html>
