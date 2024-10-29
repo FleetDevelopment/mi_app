@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request
 import pandas as pd
 from datetime import datetime, timedelta
+import json
 import locale
 import re
 
@@ -12,12 +13,43 @@ def load_data():
     componentes_df = pd.read_excel('componentes.xlsx')
     englimiter_df = pd.read_excel('englimiter.xlsx')
     return aeronaves_df, componentes_df, englimiter_df
-
+    
 @app.route('/')
 def index():
-    aeronaves_df, _, _ = load_data()
+    # Cargar datos desde los archivos
+    aeronaves_df, componentes_df, englimiter_df = load_data()
     aeronaves = aeronaves_df['Matricula'].tolist()
-    return render_template('index.html', aeronaves=aeronaves)
+    
+    # Definir una lista para almacenar los vencimientos de componentes
+    vencimientos = []
+    
+    # Iterar sobre cada componente en componentes_df
+    for _, row in componentes_df.iterrows():
+        sn = row['S/N']
+        
+        # Obtener los límites correspondientes al S/N desde englimiter_df
+        eng_data = englimiter_df[englimiter_df['S/N'] == sn]
+        
+        if not eng_data.empty:
+            # Si los datos existen en englimiter_df, extraemos EGTLimit y LLPLimit
+            egt_limit = int(eng_data.iloc[0]['EGTLimit'])
+            llp_limit = int(eng_data.iloc[0]['LLPLimit'])
+            
+            # Calcular el Rem Limiter como el valor menor entre EGTLimit - CSN y LLPLimit - CSN
+            rem_limiter = min(egt_limit - int(row['CSN']), llp_limit - int(row['CSN']))
+            
+            # Calcular la fecha de vencimiento estimada
+            dias_remanentes = rem_limiter / 7  # Dividir por 7 para días remanentes
+            fecha_vencimiento = (datetime.now() + timedelta(days=dias_remanentes)).strftime('%d-%b-%y')
+            
+            # Agregar al listado de vencimientos
+            vencimientos.append({
+                'Fecha': fecha_vencimiento,
+                'Rem Limiter': int(rem_limiter)  # Convertir Rem Limiter a int
+            })
+
+    # Renderizar el template principal con las aeronaves y los vencimientos
+    return render_template('index.html', aeronaves=aeronaves, vencimientos=vencimientos)
 
 @app.route('/aeronave/<matricula>')
 def aeronave(matricula):
